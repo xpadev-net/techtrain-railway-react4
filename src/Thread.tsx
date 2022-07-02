@@ -20,6 +20,7 @@ function Thread() {
     setSubmitDisable(true);
     const data = {name:name,content:content};
     //send post
+    setContent("");
     load();
   }
   useEffect(()=>{
