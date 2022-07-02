@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {ChangeEvent, FormEvent, useCallback, useEffect, useState} from 'react';
 import Styles from './Block.module.scss';
 import {useParams} from 'react-router-dom';
 
@@ -16,13 +16,20 @@ function Thread() {
     setData(res);
     setSubmitDisable(false);
   }
-  const post = async() => {
+  const post = useCallback(async(e:FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setSubmitDisable(true);
     const data = {name:name,content:content};
     //send post
     setContent("");
     load();
-  }
+  },[name,content]),
+    onNameChange=useCallback((e:ChangeEvent<HTMLInputElement>)=>{
+      setName(e.target.value)
+    },[]),
+    onContentChange=useCallback((e:ChangeEvent<HTMLTextAreaElement>)=>{
+      setContent(e.target.value)
+    },[]);
   useEffect(()=>{
     load();
   },[]);
@@ -41,10 +48,10 @@ function Thread() {
         })}
       </div>
       <div className={Styles.Block}>
-        <form onSubmit={(e)=>{post();e.preventDefault();}}>
-          <p><input type="text" placeholder={"name"} value={name} onChange={(e)=>setName(e.target.value)}/></p>
-          <textarea onChange={(e)=>setContent(e.target.value)}>{content}</textarea>
-          <p><input type="submit" disabled={isSubmitDisable} placeholder={"内容"}/></p>
+        <form onSubmit={post}>
+          <p><input type="text" placeholder={"name"} value={name} onChange={onNameChange}/></p>
+          <textarea placeholder={"content"} onChange={onContentChange}>{content}</textarea>
+          <p><input type="submit" disabled={isSubmitDisable} placeholder={"投稿"}/></p>
         </form>
       </div>
     </>
