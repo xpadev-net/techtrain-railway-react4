@@ -8,6 +8,10 @@ type Thread = {
   id: number,
   title: string
 }
+type NewThread = {
+  threadId: string,
+  title: string
+}
 type Posts = {
   threadId: string,
   posts:{id:string,post:string}[]

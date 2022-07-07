@@ -11,8 +11,8 @@ function NewThread() {
     setSubmitDisable(true);
     const data = {title: title};
     const req = await fetch(`https://railway-react-bulletin-board.herokuapp.com/threads`,{method:"POST",headers:{'Content-Type': 'application/json'},body:JSON.stringify(data)});
-    const res = await req.json();
-    navigate(`/thread/${res.id}`);
+    const res = await req.json() as NewThread;
+    navigate(`/thread/${res.threadId}`);
   },[title]),
       onTitleChange = useCallback((e:ChangeEvent<HTMLInputElement>)=>{
         setTitle(e.target.value)
