@@ -21,6 +21,7 @@ function Index() {
 
   return (
     <div>
+      <Link to={"/thread/new"}><h2>新規スレッド作成</h2></Link>
       <div className={Styles.Block}>
         {data.map((thread)=>{
           return <p><Link key={`threadList${thread.id}`} to={`/thread/${thread.id}`}>{thread.id}: {thread.title}</Link></p>

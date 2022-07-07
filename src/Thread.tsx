@@ -1,4 +1,4 @@
-import {FormEvent, useEffect, useState} from 'react';
+import {ChangeEvent, FormEvent, useCallback, useEffect, useState} from 'react';
 import Styles from './Block.module.scss';
 import {useParams} from 'react-router-dom';
 
@@ -16,15 +16,19 @@ function Thread() {
     setSubmitDisable(false);
     setOffset(res.length===10?offset+1:-1);
   }
-  const post = async(e:FormEvent<HTMLFormElement>) => {
+  const post = useCallback(async(e:FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitDisable(true);
     const data = {post:content};
     const req = await fetch(`https://virtserver.swaggerhub.com/INFO_3/BulletinBoardApplication/1.0.0/threads/${params.id}/posts`,{method:"POST",headers:{'Content-Type': 'application/json'},body:JSON.stringify(data)});
     await req.text();
     setOffset(offset<1?0:offset-1);
+    setContent("");
     load();
-  }
+  },[content]),
+    onContentChange=useCallback((e:ChangeEvent<HTMLTextAreaElement>)=>{
+      setContent(e.target.value)
+    },[]);
   useEffect(()=>{
     load();
   },[]);
@@ -46,8 +50,8 @@ function Thread() {
       {(data?.posts.length%10===0)?<button onClick={()=>load()}>読み込む</button>:""}
       <div className={Styles.Block}>
         <form onSubmit={post}>
-          <textarea onChange={(e)=>setContent(e.target.value)} value={content}></textarea>
-          <p><input type="submit" disabled={isSubmitDisable} value={"投稿"}/></p>
+          <textarea placeholder={"content"} onChange={onContentChange} value={content}></textarea>
+          <p><input type="submit" disabled={isSubmitDisable} placeholder={"投稿"}/></p>
         </form>
       </div>
     </>
