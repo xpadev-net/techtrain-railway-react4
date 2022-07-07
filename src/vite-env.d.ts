@@ -6,12 +6,9 @@ declare module "*.scss" {
 }
 type Thread = {
   id: number,
-  title: string,
-  posts: Post[]
+  title: string
 }
-type Post = {
-  id: number,
-  date: number,
-  name: string,
-  content: string
+type Posts = {
+  threadId: string,
+  posts:{id:string,post:string}[]
 }

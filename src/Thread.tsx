@@ -1,25 +1,28 @@
-import {useEffect, useState} from 'react';
+import {FormEvent, useEffect, useState} from 'react';
 import Styles from './Block.module.scss';
 import {useParams} from 'react-router-dom';
 
 
 function Thread() {
   const params = useParams();
-  const [data, setData] = useState<Thread|undefined>(undefined),
-    [name, setName] = useState<string>("仕様書無しさん"),
+  const [data, setData] = useState<Posts|undefined>(undefined),
     [content, setContent] = useState<string>(""),
-    [isSubmitDisable, setSubmitDisable] = useState<boolean>(false);
+    [isSubmitDisable, setSubmitDisable] = useState<boolean>(false),
+    [offset,setOffset] = useState<number>(0);
   const load = async()=>{
-    //const req = await fetch("hoge");
-    //const res = await req.json();
-    const res = {id:0,title:"hoge",posts:[{id:0,content:"hogehoge\ntest",name:"aaaa",date:1656671474}]} as Thread;
+    const req = await fetch(`https://virtserver.swaggerhub.com/INFO_3/BulletinBoardApplication/1.0.0/threads/${params.id}/posts?offset=${offset*10}`);
+    const res = await req.json();
     setData(res);
     setSubmitDisable(false);
+    setOffset(res.length===10?offset+1:-1);
   }
-  const post = async() => {
+  const post = async(e:FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setSubmitDisable(true);
-    const data = {name:name,content:content};
-    //send post
+    const data = {post:content};
+    const req = await fetch(`https://virtserver.swaggerhub.com/INFO_3/BulletinBoardApplication/1.0.0/threads/${params.id}/posts`,{method:"POST",headers:{'Content-Type': 'application/json'},body:JSON.stringify(data)});
+    await req.text();
+    setOffset(offset<1?0:offset-1);
     load();
   }
   useEffect(()=>{
@@ -29,21 +32,22 @@ function Thread() {
 
   return (
     <>
+      <h2>{data.threadId}</h2>
       <div className={Styles.Block}>
         {data.posts.map((post)=>{
           return <div key={`post${post.id}`}>
-            <h3>{post.id} 名前: {post.name} : {new Date(post.date*1000).toLocaleString()}</h3>
-            {post.content.split("\n").map((string,key)=>{
+            <h3>{post.id}</h3>
+            {post.post.split("\n").map((string,key)=>{
               return <p key={`postContent-${post.id}-${key}`}>{string}</p>;
             })}
           </div>
         })}
       </div>
+      {(data?.posts.length%10===0)?<button onClick={()=>load()}>読み込む</button>:""}
       <div className={Styles.Block}>
-        <form onSubmit={(e)=>{post();e.preventDefault();}}>
-          <p><input type="text" placeholder={"name"} value={name} onChange={(e)=>setName(e.target.value)}/></p>
-          <textarea onChange={(e)=>setContent(e.target.value)}>{content}</textarea>
-          <p><input type="submit" disabled={isSubmitDisable} placeholder={"内容"}/></p>
+        <form onSubmit={post}>
+          <textarea onChange={(e)=>setContent(e.target.value)} value={content}></textarea>
+          <p><input type="submit" disabled={isSubmitDisable} value={"投稿"}/></p>
         </form>
       </div>
     </>
