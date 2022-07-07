@@ -9,7 +9,7 @@ function Index() {
     [isLoading,setIsLoading] = useState(true);
   const load = async()=>{
     setIsLoading(true);
-    const req = await fetch(`https://virtserver.swaggerhub.com/INFO_3/BulletinBoardApplication/1.0.0/threads?offset=${offset*10}`);
+    const req = await fetch(`https://railway-react-bulletin-board.herokuapp.com/threads?offset=${offset*10}`);
     const res = await req.json() as Thread[];
     setData([...data,...res]);
     setOffset(res.length===10?offset+1:-1);

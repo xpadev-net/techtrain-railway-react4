@@ -1,6 +1,6 @@
 import {ChangeEvent, FormEvent, useCallback, useEffect, useState} from 'react';
 import Styles from './Block.module.scss';
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 
 
 function Thread() {
@@ -9,22 +9,22 @@ function Thread() {
     [content, setContent] = useState<string>(""),
     [isSubmitDisable, setSubmitDisable] = useState<boolean>(false),
     [offset,setOffset] = useState<number>(0);
-  const load = async()=>{
-    const req = await fetch(`https://virtserver.swaggerhub.com/INFO_3/BulletinBoardApplication/1.0.0/threads/${params.id}/posts?offset=${offset*10}`);
+  const load = async(of=offset)=>{
+    if (of<0)return;
+    const req = await fetch(`https://railway-react-bulletin-board.herokuapp.com/threads/${params.id}/posts?offset=${of*10}`);
     const res = await req.json();
     setData(res);
     setSubmitDisable(false);
-    setOffset(res.length===10?offset+1:-1);
+    setOffset(res.length===10?of+1:-1);
   }
   const post = useCallback(async(e:FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitDisable(true);
     const data = {post:content};
-    const req = await fetch(`https://virtserver.swaggerhub.com/INFO_3/BulletinBoardApplication/1.0.0/threads/${params.id}/posts`,{method:"POST",headers:{'Content-Type': 'application/json'},body:JSON.stringify(data)});
+    const req = await fetch(`https://railway-react-bulletin-board.herokuapp.com/threads/${params.id}/posts`,{method:"POST",headers:{'Content-Type': 'application/json'},body:JSON.stringify(data)});
     await req.text();
-    setOffset(offset<1?0:offset-1);
     setContent("");
-    load();
+    load(offset<1?0:offset-1);
   },[content]),
     onContentChange=useCallback((e:ChangeEvent<HTMLTextAreaElement>)=>{
       setContent(e.target.value)
@@ -36,6 +36,7 @@ function Thread() {
 
   return (
     <>
+      <h2><Link to={"/"}>戻る</Link></h2>
       <h2>{data.threadId}</h2>
       <div className={Styles.Block}>
         {data.posts.map((post)=>{

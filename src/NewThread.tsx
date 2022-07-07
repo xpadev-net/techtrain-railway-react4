@@ -10,9 +10,9 @@ function NewThread() {
     e.preventDefault();
     setSubmitDisable(true);
     const data = {title: title};
-    const req = await fetch(`https://virtserver.swaggerhub.com/INFO_3/BulletinBoardApplication/1.0.0/threads`,{method:"POST",headers:{'Content-Type': 'application/json'},body:JSON.stringify(data)});
+    const req = await fetch(`https://railway-react-bulletin-board.herokuapp.com/threads`,{method:"POST",headers:{'Content-Type': 'application/json'},body:JSON.stringify(data)});
     const res = await req.json();
-    navigate(`/thread/${res.threadId}`);
+    navigate(`/thread/${res.id}`);
   },[title]),
       onTitleChange = useCallback((e:ChangeEvent<HTMLInputElement>)=>{
         setTitle(e.target.value)
