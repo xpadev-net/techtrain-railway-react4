@@ -14,5 +14,5 @@ type NewThread = {
 }
 type Posts = {
   threadId: string,
-  posts:{id:string,post:string}[]
+  posts:{ id: string, post:string}[]
 }
