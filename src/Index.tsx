@@ -24,7 +24,7 @@ function Index() {
             <Link to={"/thread/new"}><h2>新規スレッド作成</h2></Link>
             <div className={Styles.Block}>
                 {data.map((thread) => {
-                    return <p><Link key={`threadList${thread.id}`}
+                    return <p key={`threadList${thread.id}`}><Link
                                     to={`/thread/${thread.id}`}>{thread.id}: {thread.title}</Link></p>
                 })}
                 {(!isLoading && offset > 0) ? <button onClick={() => load()}>読み込む</button> : ""}
