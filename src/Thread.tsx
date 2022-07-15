@@ -10,12 +10,13 @@ function Thread() {
         [isSubmitDisable, setSubmitDisable] = useState<boolean>(false),
         [offset, setOffset] = useState<number>(0);
     const load = async (of = offset) => {
+            console.log(offset)
             if (of < 0) return;
             const req = await fetch(`https://railway-react-bulletin-board.herokuapp.com/threads/${params.id}/posts?offset=${of * 10}`);
             const res = await req.json();
             setData(res);
             setSubmitDisable(false);
-            setOffset(res.length === 10 ? of + 1 : -1);
+            setOffset(res.posts.length === 10 ? of + 1 : -1);
         },
         post = async (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
